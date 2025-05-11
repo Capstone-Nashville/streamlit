@@ -76,17 +76,13 @@ def card_analytics(df):
     )
 
 
-
-     # Menambahkan opsi 'Pilih Semua' di bulan dan menjadikannya default
     bulan_tahun_options = df['Tanggal Transaksi'].dt.strftime('%B %Y').unique()
-    bulan_tahun_options = ['All'] + list(bulan_tahun_options)  # Menambahkan 'All' sebagai pilihan pertama
-    bulan_terpilih = st.multiselect('Pilih Bulan dan Tahun', bulan_tahun_options, default=['All'])  # Default 'All' dipilih
-
-    # Jika 'All' dipilih, semua bulan dipilih
+    bulan_tahun_options = ['All'] + list(bulan_tahun_options)
+    bulan_terpilih = st.multiselect('Pilih Bulan dan Tahun', bulan_tahun_options, default=['All']) 
+    
     if 'All' in bulan_terpilih:
-        bulan_terpilih = bulan_tahun_options[1:]  # Menghapus 'All' jika dipilih
-
-    # Filter data berdasarkan bulan yang dipilih
+        bulan_terpilih = bulan_tahun_options[1:]  
+    
     df_bulan = df[df['Tanggal Transaksi'].dt.strftime('%B %Y').isin(bulan_terpilih)]
 
     if not bulan_terpilih:
@@ -98,13 +94,13 @@ def card_analytics(df):
     formatted_penjualan_item = f"{total_penjualan_item:,}".replace(",", ".")
 
     produk_terlaris = df_bulan.groupby('Nama Produk')['Quantity'].sum()
-    produk_terlaris_nama = produk_terlaris.idxmax()  # Nama produk terlaris
-    produk_terlaris_kuantitas = produk_terlaris.max()  # Kuantitas produk terlaris
+    produk_terlaris_nama = produk_terlaris.idxmax()
+    produk_terlaris_kuantitas = produk_terlaris.max()
     formatted_kuantitas_produk = f"{produk_terlaris_kuantitas:,}".replace(",", ".")
 
     outlet_terlaris = df_bulan.groupby('Outlet')['Sub Total'].sum()
-    outlet_terlaris_nama = outlet_terlaris.idxmax()  # Nama outlet terlaris
-    outlet_terlaris_penjualan = outlet_terlaris.max()  # Total penjualan outlet terlaris
+    outlet_terlaris_nama = outlet_terlaris.idxmax()
+    outlet_terlaris_penjualan = outlet_terlaris.max()
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -127,43 +123,40 @@ def comparison(df):
     st.subheader("Diagram Line Chart Penjualan Bonbon Ice Cream per Bulan (2023)")
     st.markdown("\n")
 
-    # Mengonversi kolom 'Tanggal Transaksi' menjadi datetime
     df['Tanggal Transaksi'] = pd.to_datetime(df['Tanggal Transaksi'])
-
-    # Mengelompokkan berdasarkan bulan dan menghitung jumlah penjualan per bulan
+    
     total_penjualan_per_bulan = df.groupby(df['Tanggal Transaksi'].dt.strftime('%B %Y'))['Sub Total'].sum().reset_index(name='Total Pendapatan')
-
-    # Urutan bulan yang benar (Mei 2024 sampai April 2025)
+    
     bulan_urutan = ['May 2024', 'June 2024', 'July 2024', 'August 2024', 'September 2024', 'October 2024',
                     'November 2024', 'December 2024', 'January 2025', 'February 2025', 'March 2025', 'April 2025']
 
-    # Mengubah kolom 'Tanggal Transaksi' menjadi kategori dengan urutan bulan yang benar
+    
     total_penjualan_per_bulan['Tanggal Transaksi'] = pd.Categorical(total_penjualan_per_bulan['Tanggal Transaksi'],
                                                         categories=bulan_urutan, ordered=True)
     total_penjualan_per_bulan = total_penjualan_per_bulan.sort_values('Tanggal Transaksi')
 
-    # Membuat line chart
+    
     fig_line = px.line(total_penjualan_per_bulan, x='Tanggal Transaksi', y='Total Pendapatan')
     fig_line.update_xaxes(title='Bulan')
     fig_line.update_yaxes(title='Total Pendapatan')
     fig_line.update_layout(
         plot_bgcolor='#ffffff',  
-        paper_bgcolor='#ffffff',  # Warna font
-        margin=dict(t=30, b=30, l=30, r=30),  # Menambahkan margin agar grafik tidak terlalu rapat
+        paper_bgcolor='#ffffff', 
+        margin=dict(t=30, b=30, l=30, r=30), 
         font=dict(color="red")
     )
-    fig_line.update_traces(line=dict(color='#FDD776', width=3))  # Mengubah warna garis menjadi merah
-        # Mengubah label sumbu X dan Y
+    fig_line.update_traces(line=dict(color='#FDD776', width=3))
+        
     fig_line.update_xaxes(
-        title='Bulan',  # Mengubah label sumbu X
-        title_font=dict(size=14, color='#EC0A0B'),  # Mengubah font dan warna label X
-        tickmode='array',  # Mengatur mode tick untuk menampilkan bulan dalam urutan yang benar
+        title='Bulan',
+        title_font=dict(size=14, color='#EC0A0B'), 
+        tickmode='array',
         tickfont=dict(color='#EC0A0B')
     )
     fig_line.update_yaxes(
-        title='Total Pendapatan',  # Mengubah label sumbu Y
-        title_font=dict(size=14, color='#EC0A0B'),  # Mengubah font dan warna label Y
-        tickfont=dict(color='#EC0A0B')  # Mengubah warna angka di sumbu Y menjadi merah
+        title='Total Pendapatan',
+        title_font=dict(size=14, color='#EC0A0B'),  
+        tickfont=dict(color='#EC0A0B')  
     )
 
     # Menampilkan grafik
@@ -171,15 +164,24 @@ def comparison(df):
 
     st.markdown("---")
 
-    st.subheader("Perbandingan Penjualan")
+    st.subheader("Barchart Comparison")
     st.markdown("\n")
-    jumlah_penjualan = df.groupby('Nama Produk')['Sub Total'].sum().reset_index()
-    jumlah_penjualan = jumlah_penjualan.head().sort_values('Sub Total', ascending=True)
-    jumlah_penjualan.columns = ['Nama Produk', 'Sub Total']
-    fig_nama_produk  = px.bar(jumlah_penjualan, y='Nama Produk', x='Sub Total',
-                            orientation='h', title='Total Penjualan berdasarkan Nama Produk')
-    fig_nama_produk.update_xaxes(title='Sub Total')
-    fig_nama_produk.update_yaxes(title='Nama Produk')
+
+    col1, col2 = st.columns(2)
+    with col1:
+        y_label = st.selectbox('Pilih Label Y', ['Nama Produk', 'Kategori'])
+    with col2:
+        x_label = st.selectbox('Pilih Label X', ['Sub Total', 'Quantity'])
+
+    jumlah_penjualan = df.groupby([y_label])[x_label].sum().reset_index()
+    
+    jumlah_penjualan = jumlah_penjualan.head().sort_values(x_label, ascending=True)
+    
+    fig_nama_produk = px.bar(jumlah_penjualan, y=y_label, x=x_label,
+                            orientation='h', title=f'Total Penjualan berdasarkan {y_label}')
+    fig_nama_produk.update_xaxes(title=x_label)
+    fig_nama_produk.update_yaxes(title=y_label)
+
     st.plotly_chart(fig_nama_produk, use_container_width=True, style={'border': '1px solid black'})
 
 
