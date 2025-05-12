@@ -120,10 +120,60 @@ def card_analytics(df):
 
 
 def comparison(df):
-    st.subheader("Diagram Line Chart Penjualan Bonbon Ice Cream per Bulan (2023)")
+    st.subheader("Barchart Comparison")
     st.markdown("\n")
 
-    df['Tanggal Transaksi'] = pd.to_datetime(df['Tanggal Transaksi'])
+    col1, col2 = st.columns(2)
+    with col1:
+        y_label = st.selectbox('Pilih Label Y', ['Nama Produk', 'Kategori'])
+    with col2:
+        x_label = st.selectbox('Pilih Label X', ['Sub Total', 'Quantity'])
+
+    jumlah_penjualan = df.groupby([y_label])[x_label].sum().reset_index()
+    
+    jumlah_penjualan = jumlah_penjualan.head().sort_values(x_label, ascending=True)
+    
+    fig_nama_produk = px.bar(jumlah_penjualan, y=y_label, x=x_label,
+                            orientation='h', title=f'Total Penjualan berdasarkan {y_label}')
+    fig_nama_produk.update_xaxes(title=x_label)
+    fig_nama_produk.update_yaxes(title=y_label)
+
+    st.plotly_chart(fig_nama_produk, use_container_width=True, style={'border': '1px solid black'})
+
+def relation(df):
+    st.subheader("Diagram Scatter Plot Harga Jual dan Sub Total Transaksi")
+    st.markdown("\n")
+    fig = px.scatter(df, x='Harga Jual (Rp)', y='Sub Total')
+    fig.update_layout(xaxis_title='Harga Jual (Rp)', yaxis_title='Sub Total', xaxis_tickangle=0)
+    st.plotly_chart(fig, use_container_width=True, style={'border': '1px solid black'})
+
+
+def composition(df):
+    st.subheader("Diagram Pie Chart Pendapatan Tiap Outlet")
+    st.markdown("\n")
+    pendapatan_outlet = df.groupby('Outlet')['Sub Total'].sum()
+    pendapatan_outlet = pendapatan_outlet.sort_values(ascending=False)
+    fig = px.pie(names=pendapatan_outlet.index, values=pendapatan_outlet.values, title="Pendapatan Tiap Outlet")
+    fig.update_traces(marker=dict(line=dict(color='#FFFFFF', width=2)))
+    fig.update_layout(
+        plot_bgcolor='rgba(0, 0, 0, 0)',  # Mengubah background grafik menjadi gelap
+        paper_bgcolor='rgba(0, 0, 0, 0)',  # Mengubah background keseluruhan halaman menjadi gelap
+        margin=dict(t=40, b=40, l=40, r=40),  # Memberikan margin untuk ruang tambahan di sekitar grafik
+        font=dict(color='#EC0A0B'),  # Mengubah warna font untuk seluruh grafik menjadi putih
+        legend=dict(
+            title="Outlet",  # Mengubah judul legend
+            title_font=dict(size=16, color='#EC0A0B'),  # Mengubah font dan warna judul legend
+            font=dict(size=12, color='#EC0A0B'),  # Mengubah font dan warna teks legend
+            bgcolor='#ffffff',  # Memberikan latar belakang transparan pada legend
+            bordercolor='#ffffff',  # Menambahkan border putih pada legend
+            borderwidth=2  # Menetapkan ketebalan border pada legend
+        )
+    )
+    st.plotly_chart(fig, use_container_width=True, style={'border': '1px solid black'})
+
+def distribution(df):
+    st.subheader("Diagram Line Chart Penjualan Bonbon Ice Cream per Bulan")
+    st.markdown("\n")
     
     total_penjualan_per_bulan = df.groupby(df['Tanggal Transaksi'].dt.strftime('%B %Y'))['Sub Total'].sum().reset_index(name='Total Pendapatan')
     
@@ -145,7 +195,7 @@ def comparison(df):
         margin=dict(t=30, b=30, l=30, r=30), 
         font=dict(color="red")
     )
-    fig_line.update_traces(line=dict(color='#FDD776', width=3))
+    fig_line.update_traces(line=dict(color='#FFCB47', width=3))
         
     fig_line.update_xaxes(
         title='Bulan',
@@ -162,47 +212,71 @@ def comparison(df):
     # Menampilkan grafik
     st.plotly_chart(fig_line, use_container_width=True, style={'border': '1px solid black'})
 
-    st.markdown("---")
-
-    st.subheader("Barchart Comparison")
-    st.markdown("\n")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        y_label = st.selectbox('Pilih Label Y', ['Nama Produk', 'Kategori'])
-    with col2:
-        x_label = st.selectbox('Pilih Label X', ['Sub Total', 'Quantity'])
-
-    jumlah_penjualan = df.groupby([y_label])[x_label].sum().reset_index()
-    
-    jumlah_penjualan = jumlah_penjualan.head().sort_values(x_label, ascending=True)
-    
-    fig_nama_produk = px.bar(jumlah_penjualan, y=y_label, x=x_label,
-                            orientation='h', title=f'Total Penjualan berdasarkan {y_label}')
-    fig_nama_produk.update_xaxes(title=x_label)
-    fig_nama_produk.update_yaxes(title=y_label)
-
-    st.plotly_chart(fig_nama_produk, use_container_width=True, style={'border': '1px solid black'})
-
-
-def relation(df):
-    print("Relation")
-
-def composition(df):
-    print("Compotition")
-
-def distribution(df):
-    print("Distribution")
 
 def main():
     st.title("Dashboard Penjualan Bonbon Ice Cream 🍦")
 
     card_analytics(data_dashboard)
+    st.markdown(
+        """
+        <style>
+        .icon {
+            color: #EC0A0B;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    chart_type = st.selectbox("Pilih Jenis Grafik yang Ingin Ditampilkan", ["Comparison", "Relation", "Composition", "Distribution"])
+    chart_type = option_menu(
+        "Grafik Data",
+        options=["Comparison", "Relation", "Composition", "Distribution"],
+        icons=["bar-chart", "project-diagram", "pie-chart", "line-chart"],
+        menu_icon="list",
+        default_index=0,
+        orientation="horizontal",
+        styles={
+            "nav": {
+                "border-radius": "10px",
+            },
+            "nav-item": {
+                "margin": "0px 5px",
+            },
+            "icon": {
+                "color": "white",
+                "font-size": "18px",
+            },
+            "menu-title": {
+                "color": "#EC0A0B",
+            },
+            "nav-link": {
+                "font-size": "15px",
+                "text-align": "center",
+                "margin": "0px 12px",
+                "--hover-color": "#FFCB47",
+                "padding": "8px 12px",
+                "border-radius": "10px",
+                "border":" 2px solid #EC0A0B",
+                "color": "#EC0A0B",
+            },
+            "nav-link-selected": {
+                "background-color": "#EC0A0B",
+                "color": "white",
+                "border-radius": "10px",
+            },
+        }
+    )
 
     if chart_type == "Comparison":
         comparison(data_dashboard)
+    elif chart_type == "Relation":
+        relation(data_dashboard)
+    elif chart_type == "Composition":
+        composition(data_dashboard)
+    elif chart_type == "Distribution":
+        distribution(data_dashboard)
+    else:
+        st.warning("Silakan pilih jenis grafik yang ingin ditampilkan.")
 
 
 

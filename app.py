@@ -48,8 +48,7 @@ def main():
     st.markdown(
         """
         <style>
-        /* Ganti warna background sidebar */
-        .edtmxes8 {  /* Sidebar Streamlit */
+        .edtmxes8 {  
             background-color: #EC0A0B !important;  
         }
         
@@ -75,10 +74,12 @@ def main():
     with st.sidebar:
         page = option_menu("Main Menu",
                                 ["Home", "Model Clusters"],
-                                icons=["house", "search"], default_index=0,
+                                icons=["house", "search"],
+                                menu_icon="list",
+                                default_index=0,
                                 styles={
                                     "menu-title":{
-                                        "color":"#EC0A0B"
+                                        "color":"#EC0A0B !important",
                                     },
                                     "container": {
                                         "padding": "5!important",
@@ -89,7 +90,7 @@ def main():
                                         "margin": "5px",
                                         "--hover-color": "#FDD776",
                                         "border": "2px solid #EC0A0B",
-                                        "color":"#EC0A0B"
+                                        "color":"#EC0A0B !important"
                                     },
                                     "nav-link-selected": {
                                         "background-color":"#ffffff"}
