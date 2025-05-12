@@ -129,11 +129,10 @@ def comparison(df):
     with col2:
         x_label = st.selectbox('Pilih Label X', ['Sub Total', 'Quantity'])
 
-    jumlah_penjualan = df.groupby([y_label])[x_label].sum().reset_index()
+    jumlah_penjualan = df.groupby(y_label)[x_label].sum().sort_values(ascending=True)
+    top10_jumlah_penjualan = jumlah_penjualan.head(10)
     
-    jumlah_penjualan = jumlah_penjualan.head().sort_values(x_label, ascending=True)
-    
-    fig_nama_produk = px.bar(jumlah_penjualan, y=y_label, x=x_label,
+    fig_nama_produk = px.bar(top10_jumlah_penjualan, y=top10_jumlah_penjualan.index, x=top10_jumlah_penjualan.values,
                             orientation='h', title=f'Total Penjualan berdasarkan {y_label}')
     fig_nama_produk.update_xaxes(title=x_label)
     fig_nama_produk.update_yaxes(title=y_label)
