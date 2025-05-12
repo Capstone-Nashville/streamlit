@@ -129,7 +129,7 @@ def comparison(df):
     with col2:
         x_label = st.selectbox('Pilih Label X', ['Sub Total', 'Quantity'])
 
-    jumlah_penjualan = df.groupby(y_label)[x_label].sum().sort_values(ascending=True)
+    jumlah_penjualan = df.groupby(y_label)[x_label].sum().sort_values(ascending=False)
     top10_jumlah_penjualan = jumlah_penjualan.head(10)
     
     fig_nama_produk = px.bar(top10_jumlah_penjualan, y=top10_jumlah_penjualan.index, x=top10_jumlah_penjualan.values,
@@ -230,7 +230,7 @@ def main():
     chart_type = option_menu(
         "Grafik Data",
         options=["Comparison", "Relation", "Composition", "Distribution"],
-        icons=["bar-chart", "project-diagram", "pie-chart", "line-chart"],
+        icons=["bar-chart", "bar-chart", "pie-chart", "pie-chart"],
         menu_icon="list",
         default_index=0,
         orientation="horizontal",

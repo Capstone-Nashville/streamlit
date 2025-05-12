@@ -3,7 +3,6 @@ from streamlit_option_menu import option_menu
 import plotly.express as px
 import pandas as pd
 import numpy as np
-import os
 import base64
 import warnings
 import matplotlib.pyplot as plt
@@ -12,11 +11,11 @@ import datetime as dt
 from view import home
 from view import predict
 
+st.set_page_config(page_title="Dashboard Bonbon Ice Cream", page_icon="img/bonbon.png", layout="wide")
+
 warnings.filterwarnings("ignore")
 
 # streamlit run .\dashboard.py --server.port 8888
-
-st.set_page_config(page_title="Dashboard Bonbon Ice Cream", page_icon="img/bonbon.png", layout="wide")
 
 @st.cache_data
 def get_img_as_base64(file):
