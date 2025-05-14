@@ -142,8 +142,15 @@ def comparison(df):
 def relation(df):
     st.subheader("Diagram Scatter Plot Harga Jual dan Sub Total Transaksi")
     st.markdown("\n")
-    fig = px.scatter(df, x='Harga Jual (Rp)', y='Sub Total')
-    fig.update_layout(xaxis_title='Harga Jual (Rp)', yaxis_title='Sub Total', xaxis_tickangle=0)
+    fig = px.scatter(
+        df, x='Harga Jual (Rp)',
+        y='Quantity',
+    )
+    fig.update_layout(
+        xaxis_title='Harga Jual (Rp)',
+        yaxis_title='Quantity',
+        xaxis_tickangle=0
+    )
     st.plotly_chart(fig, use_container_width=True, style={'border': '1px solid black'})
 
 

@@ -53,6 +53,10 @@ def main():
             background-color: #ffffff !important;
         }
 
+        .eacrzsi18 {
+            background-color: #ffffff !important
+        }
+
         </style>
         """,
         unsafe_allow_html=True
