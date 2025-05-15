@@ -1,14 +1,8 @@
 import streamlit as st
-from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_option_menu import option_menu
 import plotly.express as px
 import pandas as pd
-import numpy as np
-import os
 import warnings
-import matplotlib.pyplot as plt
-import seaborn as sns
-import datetime as dt
 from model import model as data
 warnings.filterwarnings("ignore")
 

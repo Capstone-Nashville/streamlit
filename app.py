@@ -96,8 +96,8 @@ def main():
     # Conditional page rendering
     if page == "Home":
         home.main()
-    # elif page == "Details":
-    #     predict.main()
+    elif page == "Model Clusters":
+        predict.main()
 
 if __name__ == '__main__':
     main()
