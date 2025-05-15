@@ -216,6 +216,9 @@ def distribution(df):
 def main():
     st.title("Dashboard Penjualan Bonbon Ice Cream 🍦")
 
+    with st.expander("Lihat Dataset"):
+        st.dataframe(data_dashboard)
+
     card_analytics(data_dashboard)
     st.markdown(
         """
