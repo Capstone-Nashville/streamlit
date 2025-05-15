@@ -34,7 +34,7 @@ def card_analytics(df):
             border-radius: 10px;
             padding: 10px;
             color: #EC0A0B !important;
-            border: 2px solid #EC0A0B !important;,
+            border: 4px solid #EC0A0B !important;,
             border-color: #EC0A0B
         }
 
